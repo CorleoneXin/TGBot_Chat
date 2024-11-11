@@ -15,3 +15,8 @@ This is a pet project created for my daughter :)
 
 
 link to medium article - https://medium.com/@andreyhaykin/make-your-own-telegram-voice-assistant-with-chatgpt-20d79c042a4f?source=friends_link&sk=27c8477a5209807be01fb054351bb0f0
+
+
+
+poetry install
+python ai_voice_bot.py
