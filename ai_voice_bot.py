@@ -71,25 +71,25 @@ def handle_text(message):
     bot.send_message(message.chat.id, text_response)
 
 
-@bot.message_handler(content_types=["voice"])
-def handle_voice(message):
-    """Handle voice input"""
-    # Download voice message file
-    file_info = bot.get_file(message.voice.file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    # Save voice message file locally
-    with open(f"{str(message.from_user.id)}_{VOICE_INPUT_FILE}", "wb") as new_file:
-        new_file.write(downloaded_file)
+# @bot.message_handler(content_types=["voice"])
+# def handle_voice(message):
+#     """Handle voice input"""
+#     # Download voice message file
+#     file_info = bot.get_file(message.voice.file_id)
+#     downloaded_file = bot.download_file(file_info.file_path)
+#     # Save voice message file locally
+#     with open(f"{str(message.from_user.id)}_{VOICE_INPUT_FILE}", "wb") as new_file:
+#         new_file.write(downloaded_file)
 
-    try:
-        # Get voice response from assistant
-        voice_response = ai_assistant.create_response_from_voice(message.from_user.id)
-    except Exception as err:
-        # Send error message to user if response is too long
-        bot.send_message(message.chat.id, f"{err}")
-        return
-    # Send voice response to user
-    bot.send_voice(message.chat.id, voice_response)
+#     try:
+#         # Get voice response from assistant
+#         voice_response = ai_assistant.create_response_from_voice(message.from_user.id)
+#     except Exception as err:
+#         # Send error message to user if response is too long
+#         bot.send_message(message.chat.id, f"{err}")
+#         return
+#     # Send voice response to user
+#     bot.send_voice(message.chat.id, voice_response)
 
 
 bot.infinity_polling()

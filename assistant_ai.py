@@ -8,7 +8,7 @@ import openai
 import torch
 import whisper
 from dotenv import load_dotenv
-from TTS.api import TTS
+# from TTS.api import TTS
 
 load_dotenv()
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -47,12 +47,12 @@ class AssistantAI:
         self._voice_recognition_model = whisper.load_model("base")
 
         # Initialize text-to-speech model based on language
-        if language == "en":
-            self._text_to_speech_model = TTS(TTS.list_models()[0])
-        elif language == "ru":
-            self._text_to_speech_model = self._init_tts_model_ru_model()
-        else:
-            raise Exception("Not supported language")
+        # if language == "en":
+        #     self._text_to_speech_model = TTS(TTS.list_models()[0])
+        # elif language == "ru":
+        #     self._text_to_speech_model = self._init_tts_model_ru_model()
+        # else:
+        #     raise Exception("Not supported language")
 
         # Set text generation model to GPT-3.5 Turbo
         # self._text_generator_model = "gpt-3.5-turbo"
@@ -71,21 +71,21 @@ class AssistantAI:
         # Keep previous history for each user disabled for privacy reasons
         self._use_previous_history_per_user = None
 
-    @staticmethod
-    def _init_tts_model_ru_model() -> torch.nn.Module:
-        """Helper function to initialize TTS model for Russian language"""
-        language = "ru"
-        model_id = "v3_1_ru"
-        device = torch.device("cuda")
+    # @staticmethod
+    # def _init_tts_model_ru_model() -> torch.nn.Module:
+    #     """Helper function to initialize TTS model for Russian language"""
+    #     language = "ru"
+    #     model_id = "v3_1_ru"
+    #     device = torch.device("cuda")
 
-        model, example_text = torch.hub.load(
-            repo_or_dir="snakers4/silero-models",
-            model="silero_tts",
-            language=language,
-            speaker=model_id,
-        )
-        model.to(device)
-        return model
+    #     model, example_text = torch.hub.load(
+    #         repo_or_dir="snakers4/silero-models",
+    #         model="silero_tts",
+    #         language=language,
+    #         speaker=model_id,
+    #     )
+    #     model.to(device)
+    #     return model
 
     def change_gpt_system_prompt(self, user_id: int, is_adult: bool = True) -> None:
         """changes system prompt based on user age"""
@@ -112,69 +112,69 @@ class AssistantAI:
         )
         return response
 
-    def create_response_from_voice(self, user_id: int) -> Any:
-        self._lock.acquire()
+    # def create_response_from_voice(self, user_id: int) -> Any:
+    #     self._lock.acquire()
 
-        # Stage 1: generate text from user voice with Whisper Open AI model
-        text_from_user_voice = self._voice_recognition_model.transcribe(
-            f"{str(user_id)}_{VOICE_INPUT_FILE}"
-        )["text"]
+    #     # Stage 1: generate text from user voice with Whisper Open AI model
+    #     text_from_user_voice = self._voice_recognition_model.transcribe(
+    #         f"{str(user_id)}_{VOICE_INPUT_FILE}"
+    #     )["text"]
 
-        logging.info(f"response from Whisper AI: {text_from_user_voice}")
+    #     logging.info(f"response from Whisper AI: {text_from_user_voice}")
 
-        self._lock.release()
+    #     self._lock.release()
 
-        # Stage 2: correct the text
-        edit_response = self.make_request_to_open_ai_chat_gpt_correct_text(
-            text_from_user_voice
-        )
-        self._update_user_current_history(user_id, edit_response)
-        logging.info(f"response from GPT grammar fix: {edit_response}")
+    #     # Stage 2: correct the text
+    #     edit_response = self.make_request_to_open_ai_chat_gpt_correct_text(
+    #         text_from_user_voice
+    #     )
+    #     self._update_user_current_history(user_id, edit_response)
+    #     logging.info(f"response from GPT grammar fix: {edit_response}")
 
-        # Stage 3
-        # run chatGPT to get response with user's history
-        text_response = self.make_request_to_open_ai_chat_gpt(
-            self._current_talk_per_user[user_id]
-        )
-        self._current_talk_per_user[user_id].append(
-            {"role": "assistant", "content": text_response}
-        )
+    #     # Stage 3
+    #     # run chatGPT to get response with user's history
+    #     text_response = self.make_request_to_open_ai_chat_gpt(
+    #         self._current_talk_per_user[user_id]
+    #     )
+    #     self._current_talk_per_user[user_id].append(
+    #         {"role": "assistant", "content": text_response}
+    #     )
 
-        logging.info(f"response from GPT: {text_response}")
+    #     logging.info(f"response from GPT: {text_response}")
 
-        self._lock.acquire()
+    #     self._lock.acquire()
 
-        # Stage 4: generate Voice from text by using YourTTs model
-        if self._lang == "en":
-            voice_output_per_thread = f"{str(user_id)}_{VOICE_OUTPUT_FILE}"
-            self._text_to_speech_model.tts_to_file(
-                text=text_response,
-                speaker=self._text_to_speech_model.speakers[1],
-                language=self._text_to_speech_model.languages[0],
-                file_path=voice_output_per_thread,
-            )
-            # self._text_to_speech_model.tts_to_file(text_response,
-            #                                        speaker_wav="custom_voice.wav",
-            #                                        language="en",
-            #                                        file_path=VOICE_OUTPUT_FILE)
-            voice_output = voice_output_per_thread
+    #     # Stage 4: generate Voice from text by using YourTTs model
+    #     if self._lang == "en":
+    #         voice_output_per_thread = f"{str(user_id)}_{VOICE_OUTPUT_FILE}"
+    #         self._text_to_speech_model.tts_to_file(
+    #             text=text_response,
+    #             speaker=self._text_to_speech_model.speakers[1],
+    #             language=self._text_to_speech_model.languages[0],
+    #             file_path=voice_output_per_thread,
+    #         )
+    #         # self._text_to_speech_model.tts_to_file(text_response,
+    #         #                                        speaker_wav="custom_voice.wav",
+    #         #                                        language="en",
+    #         #                                        file_path=VOICE_OUTPUT_FILE)
+    #         voice_output = voice_output_per_thread
 
-        else:
-            speaker = "xenia"
-            put_accent = True
-            put_yo = True
-            sample_rate = 48000
-            voice_output = self._text_to_speech_model.save_wav(
-                text=text_response,
-                speaker=speaker,
-                sample_rate=sample_rate,
-                put_accent=put_accent,
-                put_yo=put_yo,
-            )
-        logging.info("speech generation is done")
-        self._lock.release()
+    #     else:
+    #         speaker = "xenia"
+    #         put_accent = True
+    #         put_yo = True
+    #         sample_rate = 48000
+    #         voice_output = self._text_to_speech_model.save_wav(
+    #             text=text_response,
+    #             speaker=speaker,
+    #             sample_rate=sample_rate,
+    #             put_accent=put_accent,
+    #             put_yo=put_yo,
+    #         )
+    #     logging.info("speech generation is done")
+    #     self._lock.release()
 
-        return open(voice_output, "rb")
+    #     return open(voice_output, "rb")
 
     def make_request_to_open_ai_chat_gpt(self, prompt: str) -> str:
         # Generate a response
