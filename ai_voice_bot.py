@@ -24,9 +24,9 @@ def send_welcome(message):
     """Handle start and help commands"""
     bot.reply_to(
         message,
-        "how are you doing, how can I help you?\nThe default language is English,"
-        " you can change it to English by typing /use_ru \n"
-        "The default assistant is for Child, if you want to change it to adult, please type /adult",
+        "how are you doing, how can I help you?\n "
+        "the default assistant is for Child.\n "
+        "if you want to change it , please type /adult or /child",
     )
 
 
@@ -38,12 +38,12 @@ def change_language_to_en(message):
     bot.send_message(message.chat.id, "Done")
 
 
-@bot.message_handler(commands=["use_ru"])
-def change_language_to_ru(message):
-    """Handle changing language to Russian command"""
-    global ai_assistant
-    ai_assistant = AssistantAI(language="ru")
-    bot.send_message(message.chat.id, "Done")
+# @bot.message_handler(commands=["use_ru"])
+# def change_language_to_ru(message):
+#     """Handle changing language to Russian command"""
+#     global ai_assistant
+#     ai_assistant = AssistantAI(language="ru")
+#     bot.send_message(message.chat.id, "Done")
     
 
 @bot.message_handler(commands=["adult"])
