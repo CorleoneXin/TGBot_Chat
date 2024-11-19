@@ -24,9 +24,8 @@ def send_welcome(message):
     """Handle start and help commands"""
     bot.reply_to(
         message,
+        "ELIZA—the next generation of Artificial General Intelligence.\n "
         "how are you doing, how can I help you?\n "
-        "the default assistant is for Child.\n "
-        "if you want to change it , please type /adult or /child",
     )
 
 

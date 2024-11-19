@@ -65,7 +65,7 @@ class AssistantAI:
         self._current_talk_per_user = {}
 
         # Set system message prompt based on user age
-        self._system_msg = GPT_ASSISTANT_PROMPT_FOR_CHILD
+        self._system_msg = GPT_ASSISTANT_PROMPT_FOR_ADULT
         self._lang = language
 
         # Keep previous history for each user disabled for privacy reasons
